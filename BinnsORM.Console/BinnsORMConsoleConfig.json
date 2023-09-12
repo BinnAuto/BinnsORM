@@ -1,0 +1,9 @@
+{
+  "ConnectionString": "Server=localhost;Trusted_Connection=True;",
+  "CodeOutputDirectory": "./Output",
+  "SchemaQueryFilePath": "./BinnsORMSchemaQuery.txt",
+  "DefaultValueMappings": {
+    "(getutcdate())": "DateTime.UtcNow"
+  },
+  "DllCopyDirectories": [ "./CopyDll" ]
+}

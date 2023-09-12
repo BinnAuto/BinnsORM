@@ -1,0 +1,72 @@
+﻿USE %_DATABASE_%
+
+SELECT 
+	[SchemaName] = s.name
+	, [DatabaseName] = DB_NAME()
+	, [EntityType] = 'Table'
+	, [DataType] = c.user_type_id
+	, [ObjectName] = t.name
+	, [ColumnName] = c.name
+	, [Nullable] = c.is_nullable
+	, [ObjectAlias] = t.name
+	, [Default] = d.Definition
+	, [MaxLength] = c.max_length
+	, [Precision] = CAST(c.precision AS INTEGER)
+	, [Scale] = c.scale
+	, c.column_id
+	, [IsPrimaryKey] = CASE
+		WHEN k.CONSTRAINT_CATALOG IS NOT NULL THEN 1
+		ELSE 0
+	END
+	, [IsIdentity] = CASE
+		WHEN i.object_id IS NOT NULL THEN 1
+		ELSE 0
+	END
+FROM sys.tables t
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+	LEFT JOIN sys.default_constraints d ON d.parent_object_id = c.object_id
+		AND d.parent_column_id = c.column_id
+	LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON k.TABLE_NAME = t.name
+		AND k.COLUMN_NAME = c.name
+		AND k.CONSTRAINT_NAME LIKE 'PK%'
+	LEFT JOIN sys.identity_columns i ON i.column_id = c.column_id
+		AND i.object_id = c.object_id
+WHERE s.name = '%_SCHEMA_%'
+
+UNION ALL 
+
+SELECT
+	s.name
+	, DB_NAME()
+	, 'View'
+	, c.user_type_id
+	, t.name
+	, c.name
+	, c.is_nullable
+	, t.name
+	, d.Definition
+	, c.max_length
+	, CAST(c.precision AS INTEGER)
+	, c.scale
+	, c.column_id
+	, CASE
+		WHEN k.CONSTRAINT_CATALOG IS NOT NULL THEN 1
+		ELSE 0
+	END
+	, CASE
+		WHEN i.object_id IS NOT NULL THEN 1
+		ELSE 0
+	END
+FROM sys.views t
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+	LEFT JOIN sys.default_constraints d ON d.parent_object_id = c.object_id
+		AND d.parent_column_id = c.column_id
+	LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON k.TABLE_NAME = t.name
+		AND k.COLUMN_NAME = c.name
+		AND k.CONSTRAINT_NAME LIKE 'PK%'
+	LEFT JOIN sys.identity_columns i ON i.column_id = c.column_id
+		AND i.object_id = c.object_id
+WHERE s.name = '%_SCHEMA_%'
+ORDER BY EntityType, t.name, c.column_id

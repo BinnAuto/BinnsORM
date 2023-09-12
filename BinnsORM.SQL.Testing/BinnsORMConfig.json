@@ -1,0 +1,6 @@
+{
+  "ConnectionString": "data source=localhost;initial catalog=BINN;trusted_connection=true",
+  "DatabaseOverrides": {
+    "BINN": "OVD"
+  }
+}

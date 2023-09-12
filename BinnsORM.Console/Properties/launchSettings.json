@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BinnsORM.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-src FIRST2023 -schema dbo -namespace FARCA"
+    }
+  }
+}
