@@ -1,4 +1,5 @@
 ﻿using BinnsORM.Objects;
+using System.Collections;
 
 namespace BinnsORM.SQL.Querying
 {
@@ -141,12 +142,35 @@ namespace BinnsORM.SQL.Querying
         }
 
 
+        private void BuildInList(IEnumerable values)
+        {
+            string temp = "(";
+            foreach (object value in values)
+            {
+                temp += ((value == null) ? "NULL" : value.ToSqlString())
+                    + ", ";
+            }
+            Value2 = temp[..^2] + ")";
+        }
+
+
         private void BuildInList(params object[] values)
         {
             string temp = "(";
             foreach (object value in values)
             {
-                temp += $"{value.ToSqlString()}, ";
+                if(value is IEnumerable)
+                {
+                    foreach(var v in (IEnumerable)value)
+                    {
+                        temp += ((v == null) ? "NULL" : v.ToSqlString())
+                            + ", ";
+                    }
+                }
+                else
+                {
+                    temp += $"{value.ToSqlString()}, ";
+                }
             }
             Value2 = temp[..^2] + ")";
         }

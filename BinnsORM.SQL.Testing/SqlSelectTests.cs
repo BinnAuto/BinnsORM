@@ -44,6 +44,28 @@
 
 
         [TestMethod]
+        public void SelectInList()
+        {
+            var select = SqlSelect.From<Customer>()
+                .Where(CustomerFields.CustomerId.In(3, 5, 6));
+            string result = select.ToString();
+            string expected = $"SELECT * FROM {Database}.[dbo].[Customer] AS [Customer] WHERE ([Customer].[CustomerId] IN (3, 5, 6))";
+            Assert.AreEqual(expected, result);
+        }
+
+
+        [TestMethod]
+        public void SelectInArray()
+        {
+            var select = SqlSelect.From<Customer>()
+                .Where(CustomerFields.CustomerId.In(new int[] { 3, 5, 6 }));
+            string result = select.ToString();
+            string expected = $"SELECT * FROM {Database}.[dbo].[Customer] AS [Customer] WHERE ([Customer].[CustomerId] IN (3, 5, 6))";
+            Assert.AreEqual(expected, result);
+        }
+
+
+        [TestMethod]
         public void SelectCase()
         {
             var select = SqlSelect.From<Customer>()
